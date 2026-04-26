@@ -1,4 +1,4 @@
-package com.pr4;
+﻿package com.pr4;
 
 import java.util.Scanner;
 
