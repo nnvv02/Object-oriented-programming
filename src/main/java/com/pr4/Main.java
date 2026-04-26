@@ -1,4 +1,4 @@
-﻿package com.pr4;
+package com.pr4;
 
 import java.util.Scanner;
 
@@ -15,8 +15,7 @@ public class Main {
             String title = scanner.nextLine();
             System.out.print("Автор: ");
             String author = scanner.nextLine();
-            System.out.print("Рік: ");
-            int year = Integer.parseInt(scanner.nextLine());
+            int year = readYear(scanner);
 
             library[i] = new Book(title, author, year);
         }
@@ -27,5 +26,17 @@ public class Main {
         }
         
         scanner.close();
+    }
+
+    private static int readYear(Scanner scanner) {
+        while (true) {
+            System.out.print("Рік: ");
+            String input = scanner.nextLine();
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Некоректний рік. Введіть ціле число.");
+            }
+        }
     }
 }
