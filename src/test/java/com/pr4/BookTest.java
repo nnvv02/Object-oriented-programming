@@ -49,4 +49,55 @@ class BookTest {
         assertThrows(InvalidBookDataException.class, () -> book.setYear(0));
         assertThrows(InvalidBookDataException.class, () -> book.setPages(-1));
     }
+
+    @Test
+    void shouldCreateEBookWithValidData() {
+        EBook ebook = new EBook("Test EBook", "Author", 2020, 300, BookGenre.SCI_FI, "EPUB", 2.5);
+
+        assertEquals("Test EBook", ebook.getTitle());
+        assertEquals("EPUB", ebook.getFormat());
+        assertEquals(2.5, ebook.getFileSize());
+        assertEquals(BookGenre.SCI_FI, ebook.getGenre());
+    }
+
+    @Test
+    void shouldThrowWhenInvalidEBookData() {
+        assertThrows(InvalidBookDataException.class, () -> new EBook("Title", "Author", 2020, 300, "", 2.5));
+        assertThrows(InvalidBookDataException.class, () -> new EBook("Title", "Author", 2020, 300, "PDF", -1));
+    }
+
+    @Test
+    void shouldCreateEBookCopy() {
+        EBook original = new EBook("Test EBook", "Author", 2020, 300, BookGenre.FICTION, "PDF", 3.0);
+        EBook copy = new EBook(original);
+
+        assertEquals(original, copy);
+        assertNotSame(original, copy);
+    }
+
+    @Test
+    void shouldCreatePaperBookWithValidData() {
+        PaperBook paperBook = new PaperBook("Test Book", "Author", 2020, 350, BookGenre.FANTASY, "Publisher Co", 5000);
+
+        assertEquals("Test Book", paperBook.getTitle());
+        assertEquals("Publisher Co", paperBook.getPublisher());
+        assertEquals(5000, paperBook.getPrintRun());
+        assertEquals(BookGenre.FANTASY, paperBook.getGenre());
+    }
+
+    @Test
+    void shouldThrowWhenInvalidPaperBookData() {
+        assertThrows(InvalidBookDataException.class, () -> new PaperBook("Title", "Author", 2020, 300, "", 1000));
+        assertThrows(InvalidBookDataException.class, () -> new PaperBook("Title", "Author", 2020, 300, "Publisher", 0));
+    }
+
+    @Test
+    void shouldCreatePaperBookCopy() {
+        PaperBook original = new PaperBook("Test Book", "Author", 2020, 350, BookGenre.MYSTERY, "Publisher", 1000);
+        PaperBook copy = new PaperBook(original);
+
+        assertEquals(original, copy);
+        assertNotSame(original, copy);
+    }
 }
+
