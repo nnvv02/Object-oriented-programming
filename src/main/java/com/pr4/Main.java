@@ -1,42 +1,101 @@
 package com.pr4;
 
+import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+    private static final Scanner SCANNER = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Book[] library = new Book[5];
-        Scanner scanner = new Scanner(System.in);
+        List<Book> library = new ArrayList<>();
 
-        System.out.println("Введіть дані для 5 книг:");
+        while (true) {
+            printMenu();
+            int option = readInt("Choose option: ");
 
-        for (int i = 0; i < library.length; i++) {
-            System.out.println("Книга #" + (i + 1));
-            System.out.print("Назва: ");
-            String title = scanner.nextLine();
-            System.out.print("Автор: ");
-            String author = scanner.nextLine();
-            int year = readYear(scanner);
-
-            library[i] = new Book(title, author, year);
+            switch (option) {
+                case 1:
+                    createBook(library);
+                    break;
+                case 2:
+                    printBooks(library);
+                    break;
+                case 3:
+                    System.out.println("Exit.");
+                    SCANNER.close();
+                    return;
+                default:
+                    System.out.println("Invalid option. Enter 1, 2, or 3.");
+            }
         }
-
-        System.out.println("\nСписок створених книг:");
-        for (Book book : library) {
-            System.out.println(book.toString());
-        }
-        
-        scanner.close();
     }
 
-    private static int readYear(Scanner scanner) {
+    private static void printMenu() {
+        System.out.println("\nMenu:");
+        System.out.println("1. Create a new book");
+        System.out.println("2. Show all books");
+        System.out.println("3. Exit");
+    }
+
+    private static void createBook(List<Book> library) {
+        String title = readNonEmptyString("Title: ");
+        String author = readNonEmptyString("Author: ");
+        int year = readIntInRange("Year: ", 1, Year.now().getValue());
+        int pages = readIntInRange("Pages: ", 1, Integer.MAX_VALUE);
+
+        try {
+            Book book = new Book(title, author, year, pages);
+            library.add(book);
+            System.out.println("Book created.");
+        } catch (InvalidBookDataException e) {
+            System.out.println("Invalid book data: " + e.getMessage());
+        }
+    }
+
+    private static void printBooks(List<Book> library) {
+        if (library.isEmpty()) {
+            System.out.println("No books available.");
+            return;
+        }
+
+        System.out.println("\nBooks:");
+        for (Book book : library) {
+            System.out.println(book);
+        }
+    }
+
+    private static String readNonEmptyString(String prompt) {
         while (true) {
-            System.out.print("Рік: ");
-            String input = scanner.nextLine();
+            System.out.print(prompt);
+            String value = SCANNER.nextLine().trim();
+            if (!value.isEmpty()) {
+                return value;
+            }
+            System.out.println("Value must not be empty.");
+        }
+    }
+
+    private static int readInt(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = SCANNER.nextLine().trim();
             try {
                 return Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("Некоректний рік. Введіть ціле число.");
+                System.out.println("Enter a valid integer.");
             }
+        }
+    }
+
+    private static int readIntInRange(String prompt, int min, int max) {
+        while (true) {
+            int value = readInt(prompt);
+            if (value >= min && value <= max) {
+                return value;
+            }
+            System.out.println("Enter a value between " + min + " and " + max + ".");
         }
     }
 }
