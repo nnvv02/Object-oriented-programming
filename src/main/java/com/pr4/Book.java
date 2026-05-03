@@ -4,16 +4,32 @@ import java.time.Year;
 import java.util.Objects;
 
 public class Book {
+    private static int bookCount;
     private String title;
     private String author;
     private int year;
     private int pages;
+    private BookGenre genre;
 
     public Book(String title, String author, int year, int pages) {
+        this(title, author, year, pages, BookGenre.GENERAL);
+    }
+
+    public Book(String title, String author, int year, int pages, BookGenre genre) {
         setTitle(title);
         setAuthor(author);
         setYear(year);
         setPages(pages);
+        setGenre(genre);
+        bookCount++;
+    }
+
+    public Book(Book other) {
+        this(other.title, other.author, other.year, other.pages, other.genre);
+    }
+
+    public static int getBookCount() {
+        return bookCount;
     }
 
     public String getTitle() {
@@ -61,9 +77,20 @@ public class Book {
         this.pages = pages;
     }
 
+    public BookGenre getGenre() {
+        return genre;
+    }
+
+    public void setGenre(BookGenre genre) {
+        if (genre == null) {
+            throw new InvalidBookDataException("Genre must not be null");
+        }
+        this.genre = genre;
+    }
+
     @Override
     public String toString() {
-        return "Book{title='" + title + "', author='" + author + "', year=" + year + ", pages=" + pages + "}";
+        return "Book{title='" + title + "', author='" + author + "', year=" + year + ", pages=" + pages + ", genre=" + genre + "}";
     }
 
     @Override
@@ -71,11 +98,11 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return year == book.year && pages == book.pages && Objects.equals(title, book.title) && Objects.equals(author, book.author);
+        return year == book.year && pages == book.pages && Objects.equals(title, book.title) && Objects.equals(author, book.author) && genre == book.genre;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, author, year, pages);
+        return Objects.hash(title, author, year, pages, genre);
     }
 }
