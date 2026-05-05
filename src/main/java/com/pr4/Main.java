@@ -109,6 +109,7 @@ public class Main {
             return;
         }
 
+        System.out.println("Total objects: " + library.getBookCount());
         for (Book book : library.getBooks()) {
             System.out.println(book);
         }
