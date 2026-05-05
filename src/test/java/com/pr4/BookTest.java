@@ -99,5 +99,34 @@ class BookTest {
         assertEquals(original, copy);
         assertNotSame(original, copy);
     }
+
+    @Test
+    void shouldCreateAudioBookWithValidData() {
+        AudioBook audioBook = new AudioBook("Audio", "Author", 2020, 220, BookGenre.FICTION, 540, "Narrator");
+
+        assertEquals("Audio", audioBook.getTitle());
+        assertEquals(540, audioBook.getDurationMinutes());
+        assertEquals("Narrator", audioBook.getNarrator());
+    }
+
+    @Test
+    void shouldThrowWhenInvalidAudioBookData() {
+        assertThrows(InvalidBookDataException.class, () -> new AudioBook("Audio", "Author", 2020, 220, 0, "Narrator"));
+        assertThrows(InvalidBookDataException.class, () -> new AudioBook("Audio", "Author", 2020, 220, 30, ""));
+    }
+
+    @Test
+    void shouldCreateTextBookWithValidData() {
+        TextBook textBook = new TextBook("Math", "Author", 2020, 300, BookGenre.NON_FICTION, "Mathematics", 10);
+
+        assertEquals("Mathematics", textBook.getSubject());
+        assertEquals(10, textBook.getGradeLevel());
+    }
+
+    @Test
+    void shouldThrowWhenInvalidTextBookData() {
+        assertThrows(InvalidBookDataException.class, () -> new TextBook("Math", "Author", 2020, 300, "", 10));
+        assertThrows(InvalidBookDataException.class, () -> new TextBook("Math", "Author", 2020, 300, "Math", 0));
+    }
 }
 
