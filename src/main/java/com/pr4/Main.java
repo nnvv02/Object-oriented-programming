@@ -1,14 +1,21 @@
 package com.pr4;
 
+import java.nio.file.Path;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final int CURRENT_YEAR = Year.now().getValue();
+    private static final Path TEXT_FILE = Path.of("input.txt");
+    private static final Path JSON_FILE = Path.of("input.json");
 
     public static void main(String[] args) {
         Library library = new Library();
+        List<Book> loadedBooks = loadBooks();
+        library.addAllBooks(loadedBooks);
 
         while (true) {
             printMenu();
@@ -22,12 +29,32 @@ public class Main {
                     printBooks(library);
                     break;
                 case 3:
+                    saveBooks(library.getBooks());
                     SCANNER.close();
                     return;
                 default:
                     System.out.println("Invalid option. Enter 1 to 3.");
             }
         }
+    }
+
+    private static List<Book> loadBooks() {
+        List<Book> booksFromText = BookStorage.loadFromText(TEXT_FILE);
+        if (!booksFromText.isEmpty()) {
+            return booksFromText;
+        }
+
+        List<Book> booksFromJson = BookStorage.loadFromJson(JSON_FILE);
+        if (!booksFromJson.isEmpty()) {
+            return booksFromJson;
+        }
+
+        return new ArrayList<>();
+    }
+
+    private static void saveBooks(List<Book> books) {
+        BookStorage.saveToText(TEXT_FILE, books);
+        BookStorage.saveToJson(JSON_FILE, books);
     }
 
     private static void printMenu() {
