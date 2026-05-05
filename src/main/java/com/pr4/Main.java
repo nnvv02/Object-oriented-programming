@@ -1,15 +1,14 @@
 package com.pr4;
 
 import java.time.Year;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     private static final Scanner SCANNER = new Scanner(System.in);
+    private static final int CURRENT_YEAR = Year.now().getValue();
 
     public static void main(String[] args) {
         Library library = new Library();
-        printHeader();
 
         while (true) {
             printMenu();
@@ -17,158 +16,102 @@ public class Main {
 
             switch (option) {
                 case 1:
-                    createBook(library);
+                    createBookByType(library);
                     break;
                 case 2:
-                    createEBook(library);
-                    break;
-                case 3:
-                    createPaperBook(library);
-                    break;
-                case 4:
-                    createBookCopy(library);
-                    break;
-                case 5:
                     printBooks(library);
                     break;
-                case 6:
-                    printBooksByType(library);
-                    break;
-                case 7:
-                    printCreatedBookCount();
-                    break;
-                case 8:
-                    System.out.println("Exit.");
+                case 3:
                     SCANNER.close();
                     return;
                 default:
-                    System.out.println("Invalid option. Enter 1 to 8.");
+                    System.out.println("Invalid option. Enter 1 to 3.");
             }
         }
-    }
-
-    private static void printHeader() {
-        System.out.println("Library Application - Practical Work #7");
-        System.out.println("Polymorphism and ArrayList");
     }
 
     private static void printMenu() {
-        System.out.println("\nMenu:");
-        System.out.println("1. Create a new book");
-        System.out.println("2. Create a new EBook");
-        System.out.println("3. Create a new PaperBook");
-        System.out.println("4. Copy an existing book");
-        System.out.println("5. Show all books");
-        System.out.println("6. Show books by type");
-        System.out.println("7. Show total created books");
-        System.out.println("8. Exit");
+        System.out.println();
+        System.out.println("1. Create a new object");
+        System.out.println("2. Show all objects");
+        System.out.println("3. Exit");
     }
 
-    private static void createBook(Library library) {
-        String title = readNonEmptyString("Title: ");
-        String author = readNonEmptyString("Author: ");
-        int year = readIntInRange("Year: ", 1, Year.now().getValue());
-        int pages = readIntInRange("Pages: ", 1, Integer.MAX_VALUE);
-        BookGenre genre = readGenre();
-
-        try {
-            Book book = new Book(title, author, year, pages, genre);
-            library.addBook(book);
-            System.out.println("Book created.");
-            printCreatedBookCount();
-        } catch (InvalidBookDataException e) {
-            System.out.println("Invalid book data: " + e.getMessage());
-        }
-    }
-
-    private static void createEBook(Library library) {
-        String title = readNonEmptyString("Title: ");
-        String author = readNonEmptyString("Author: ");
-        int year = readIntInRange("Year: ", 1, Year.now().getValue());
-        int pages = readIntInRange("Pages: ", 1, Integer.MAX_VALUE);
-        BookGenre genre = readGenre();
-        String format = readNonEmptyString("Format (EPUB, PDF, MOBI): ");
-        double fileSize = readDouble("File size (MB): ");
-
-        try {
-            EBook ebook = new EBook(title, author, year, pages, genre, format, fileSize);
-            library.addBook(ebook);
-            System.out.println("EBook created.");
-            printCreatedBookCount();
-        } catch (InvalidBookDataException e) {
-            System.out.println("Invalid EBook data: " + e.getMessage());
-        }
-    }
-
-    private static void createPaperBook(Library library) {
-        String title = readNonEmptyString("Title: ");
-        String author = readNonEmptyString("Author: ");
-        int year = readIntInRange("Year: ", 1, Year.now().getValue());
-        int pages = readIntInRange("Pages: ", 1, Integer.MAX_VALUE);
-        BookGenre genre = readGenre();
-        String publisher = readNonEmptyString("Publisher: ");
-        int printRun = readIntInRange("Print run: ", 1, Integer.MAX_VALUE);
-
-        try {
-            PaperBook paperBook = new PaperBook(title, author, year, pages, genre, publisher, printRun);
-            library.addBook(paperBook);
-            System.out.println("PaperBook created.");
-            printCreatedBookCount();
-        } catch (InvalidBookDataException e) {
-            System.out.println("Invalid PaperBook data: " + e.getMessage());
-        }
-    }
-
-    private static void createBookCopy(Library library) {
-        if (library.getBookCount() == 0) {
-            System.out.println("No books available to copy.");
-            return;
-        }
-
-        List<Book> books = library.getBooks();
-        System.out.println("Available books:");
-        for (int i = 0; i < books.size(); i++) {
-            System.out.println((i + 1) + ". " + books.get(i));
-        }
-
-        int index = readIntInRange("Enter book index to copy: ", 1, books.size());
-        Book originalBook = books.get(index - 1);
-        Book copy;
-
-        try {
-            if (originalBook instanceof EBook) {
-                copy = new EBook((EBook) originalBook);
-            } else if (originalBook instanceof PaperBook) {
-                copy = new PaperBook((PaperBook) originalBook);
-            } else {
-                copy = new Book(originalBook);
+    private static void createBookByType(Library library) {
+        while (true) {
+            printCreateMenu();
+            int typeOption = readInt("Choose type: ");
+            if (typeOption == 6) {
+                return;
             }
-            library.addBook(copy);
-            System.out.println("Book copy created.");
-            printCreatedBookCount();
+
+            Book book = createBookInstance(typeOption);
+            if (book != null) {
+                library.addBook(book);
+                System.out.println("Object created.");
+                return;
+            }
+        }
+    }
+
+    private static void printCreateMenu() {
+        System.out.println();
+        System.out.println("1. Book");
+        System.out.println("2. EBook");
+        System.out.println("3. PaperBook");
+        System.out.println("4. AudioBook");
+        System.out.println("5. TextBook");
+        System.out.println("6. Back to main menu");
+    }
+
+    private static Book createBookInstance(int typeOption) {
+        if (typeOption < 1 || typeOption > 5) {
+            System.out.println("Invalid type option. Enter 1 to 6.");
+            return null;
+        }
+
+        String title = readNonEmptyString("Title: ");
+        String author = readNonEmptyString("Author: ");
+        int year = readIntInRange("Year: ", 1, CURRENT_YEAR);
+        int pages = readIntInRange("Pages: ", 1, Integer.MAX_VALUE);
+        BookGenre genre = readGenre();
+
+        try {
+            switch (typeOption) {
+                case 1:
+                    return new Book(title, author, year, pages, genre);
+                case 2:
+                    String format = readNonEmptyString("Format: ");
+                    double fileSize = readPositiveDouble("File size (MB): ");
+                    return new EBook(title, author, year, pages, genre, format, fileSize);
+                case 3:
+                    String publisher = readNonEmptyString("Publisher: ");
+                    int printRun = readIntInRange("Print run: ", 1, Integer.MAX_VALUE);
+                    return new PaperBook(title, author, year, pages, genre, publisher, printRun);
+                case 4:
+                    int durationMinutes = readIntInRange("Duration (minutes): ", 1, Integer.MAX_VALUE);
+                    String narrator = readNonEmptyString("Narrator: ");
+                    return new AudioBook(title, author, year, pages, genre, durationMinutes, narrator);
+                default:
+                    String subject = readNonEmptyString("Subject: ");
+                    int gradeLevel = readIntInRange("Grade level: ", 1, Integer.MAX_VALUE);
+                    return new TextBook(title, author, year, pages, genre, subject, gradeLevel);
+            }
         } catch (InvalidBookDataException e) {
-            System.out.println("Invalid copy data: " + e.getMessage());
+            System.out.println("Invalid data: " + e.getMessage());
+            return null;
         }
     }
 
     private static void printBooks(Library library) {
-        if (library.getBookCount() == 0) {
-            System.out.println("No books available.");
+        if (library.getBooks().isEmpty()) {
+            System.out.println("Collection is empty.");
             return;
         }
 
-        System.out.println("\nBooks:");
         for (Book book : library.getBooks()) {
             System.out.println(book);
         }
-    }
-
-    private static void printBooksByType(Library library) {
-        library.printBooksByType();
-    }
-
-    private static void printCreatedBookCount() {
-        System.out.println("Total created books: " + Book.getBookCount());
     }
 
     private static BookGenre readGenre() {
@@ -205,12 +148,16 @@ public class Main {
         }
     }
 
-    private static double readDouble(String prompt) {
+    private static double readPositiveDouble(String prompt) {
         while (true) {
             System.out.print(prompt);
             String input = SCANNER.nextLine().trim();
             try {
-                return Double.parseDouble(input);
+                double value = Double.parseDouble(input);
+                if (value > 0) {
+                    return value;
+                }
+                System.out.println("Enter a value greater than 0.");
             } catch (NumberFormatException e) {
                 System.out.println("Enter a valid number.");
             }
