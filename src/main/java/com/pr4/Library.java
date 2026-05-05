@@ -11,6 +11,16 @@ public class Library {
         books.add(book);
     }
 
+    public void addAllBooks(List<Book> booksToAdd) {
+        for (Book book : booksToAdd) {
+            books.add(book);
+        }
+    }
+
+    public void clearBooks() {
+        books.clear();
+    }
+
     public List<Book> getBooks() {
         return Collections.unmodifiableList(books);
     }
