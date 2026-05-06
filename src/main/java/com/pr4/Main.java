@@ -32,7 +32,7 @@ public class Main {
                     printBooks(library);
                     break;
                 case 4:
-                    saveBooks(library.getBooks());
+                    saveBooks(library);
                     SCANNER.close();
                     return;
                 default:
@@ -55,7 +55,13 @@ public class Main {
         return new ArrayList<>();
     }
 
-    private static void saveBooks(List<Book> books) {
+    private static void saveBooks(Library library) {
+        List<Book> books = new ArrayList<>();
+        for (BookQuantity item : library.getInventory()) {
+            for (int i = 0; i < item.getQuantity(); i++) {
+                books.add(item.getBook());
+            }
+        }
         BookStorage.saveToText(TEXT_FILE, books);
         BookStorage.saveToJson(JSON_FILE, books);
     }
@@ -161,7 +167,8 @@ public class Main {
 
             Book book = createBookInstance(typeOption);
             if (book != null) {
-                library.addBook(book);
+                int quantity = readIntInRange("Quantity: ", 1, Integer.MAX_VALUE);
+                library.addNewBook(book, quantity);
                 System.out.println("Object created.");
                 return;
             }
@@ -218,14 +225,15 @@ public class Main {
     }
 
     private static void printBooks(Library library) {
-        if (library.getBooks().isEmpty()) {
+        if (library.getInventory().isEmpty()) {
             System.out.println("Collection is empty.");
             return;
         }
 
-        System.out.println("Total objects: " + library.getBookCount());
-        for (Book book : library.getBooks()) {
-            System.out.println(book);
+        System.out.println("Unique objects: " + library.getBookCount());
+        System.out.println("Total quantity: " + library.getTotalQuantity());
+        for (BookQuantity item : library.getInventory()) {
+            System.out.println(item.getBook() + ", quantity=" + item.getQuantity());
         }
     }
 

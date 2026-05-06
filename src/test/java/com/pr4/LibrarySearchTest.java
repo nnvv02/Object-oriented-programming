@@ -56,6 +56,16 @@ class LibrarySearchTest {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    void shouldTrackUniqueAndTotalCountsAfterAggregation() {
+        Library library = createLibrary();
+
+        library.addNewBook(new Book("Dune", "Frank Herbert", 1965, 412, BookGenre.SCI_FI), 4);
+
+        assertEquals(5, library.getBookCount());
+        assertEquals(9, library.getTotalQuantity());
+    }
+
     private Library createLibrary() {
         Library library = new Library();
         library.addBook(new Book("Dune", "Frank Herbert", 1965, 412, BookGenre.SCI_FI));

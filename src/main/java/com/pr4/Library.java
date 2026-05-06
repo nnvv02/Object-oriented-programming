@@ -6,34 +6,67 @@ import java.util.List;
 import java.util.Locale;
 
 public class Library {
-    private final List<Book> books = new ArrayList<>();
+    private final List<BookQuantity> inventory = new ArrayList<>();
 
     public void addBook(Book book) {
-        books.add(book);
+        addNewBook(book, 1);
+    }
+
+    public void addNewBook(Book bk, int quantity) {
+        if (bk == null) {
+            throw new InvalidBookDataException("Book must not be null");
+        }
+        if (quantity <= 0) {
+            throw new InvalidBookDataException("Quantity must be positive");
+        }
+
+        BookQuantity existing = findInventoryEntry(bk);
+        if (existing != null) {
+            existing.addQuantity(quantity);
+            return;
+        }
+        inventory.add(new BookQuantity(bk, quantity));
     }
 
     public void addAllBooks(List<Book> booksToAdd) {
         for (Book book : booksToAdd) {
-            books.add(book);
+            addNewBook(book, 1);
         }
     }
 
     public void clearBooks() {
-        books.clear();
+        inventory.clear();
     }
 
     public List<Book> getBooks() {
+        List<Book> books = new ArrayList<>();
+        for (BookQuantity item : inventory) {
+            books.add(item.getBook());
+        }
         return Collections.unmodifiableList(books);
     }
 
+    public List<BookQuantity> getInventory() {
+        return Collections.unmodifiableList(inventory);
+    }
+
     public int getBookCount() {
-        return books.size();
+        return inventory.size();
+    }
+
+    public int getTotalQuantity() {
+        int total = 0;
+        for (BookQuantity item : inventory) {
+            total += item.getQuantity();
+        }
+        return total;
     }
 
     public List<Book> findByAuthorContains(String query) {
         String normalized = query.toLowerCase(Locale.ROOT);
         List<Book> result = new ArrayList<>();
-        for (Book book : books) {
+        for (BookQuantity item : inventory) {
+            Book book = item.getBook();
             String author = book.getAuthor().toLowerCase(Locale.ROOT);
             if (author.contains(normalized)) {
                 result.add(book);
@@ -44,7 +77,8 @@ public class Library {
 
     public List<Book> findByGenre(BookGenre genre) {
         List<Book> result = new ArrayList<>();
-        for (Book book : books) {
+        for (BookQuantity item : inventory) {
+            Book book = item.getBook();
             if (book.getGenre() == genre) {
                 result.add(book);
             }
@@ -54,7 +88,8 @@ public class Library {
 
     public List<Book> findByYearRange(int fromYear, int toYear) {
         List<Book> result = new ArrayList<>();
-        for (Book book : books) {
+        for (BookQuantity item : inventory) {
+            Book book = item.getBook();
             int year = book.getYear();
             if (year >= fromYear && year <= toYear) {
                 result.add(book);
@@ -65,12 +100,30 @@ public class Library {
 
     public List<Book> findByType(int typeOption) {
         List<Book> result = new ArrayList<>();
-        for (Book book : books) {
+        for (BookQuantity item : inventory) {
+            Book book = item.getBook();
             if (matchesType(typeOption, book)) {
                 result.add(book);
             }
         }
         return result;
+    }
+
+    public int getQuantity(Book book) {
+        BookQuantity item = findInventoryEntry(book);
+        if (item == null) {
+            return 0;
+        }
+        return item.getQuantity();
+    }
+
+    private BookQuantity findInventoryEntry(Book target) {
+        for (BookQuantity item : inventory) {
+            if (item.getBook().equals(target)) {
+                return item;
+            }
+        }
+        return null;
     }
 
     private boolean matchesType(int typeOption, Book book) {
