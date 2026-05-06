@@ -23,17 +23,20 @@ public class Main {
 
             switch (option) {
                 case 1:
-                    createBookByType(library);
+                    searchBooks(library);
                     break;
                 case 2:
-                    printBooks(library);
+                    createBookByType(library);
                     break;
                 case 3:
+                    printBooks(library);
+                    break;
+                case 4:
                     saveBooks(library.getBooks());
                     SCANNER.close();
                     return;
                 default:
-                    System.out.println("Invalid option. Enter 1 to 3.");
+                    System.out.println("Invalid option. Enter 1 to 4.");
             }
         }
     }
@@ -59,9 +62,93 @@ public class Main {
 
     private static void printMenu() {
         System.out.println();
-        System.out.println("1. Create a new object");
-        System.out.println("2. Show all objects");
-        System.out.println("3. Exit");
+        System.out.println("1. Search objects");
+        System.out.println("2. Create a new object");
+        System.out.println("3. Show all objects");
+        System.out.println("4. Exit");
+    }
+
+    private static void searchBooks(Library library) {
+        while (true) {
+            printSearchMenu();
+            int option = readInt("Choose search option: ");
+            if (option == 5) {
+                return;
+            }
+
+            switch (option) {
+                case 1:
+                    searchByAuthor(library);
+                    break;
+                case 2:
+                    searchByGenre(library);
+                    break;
+                case 3:
+                    searchByYearRange(library);
+                    break;
+                case 4:
+                    searchByType(library);
+                    break;
+                default:
+                    System.out.println("Invalid search option. Enter 1 to 5.");
+            }
+        }
+    }
+
+    private static void printSearchMenu() {
+        System.out.println();
+        System.out.println("Search menu:");
+        System.out.println("1. By author");
+        System.out.println("2. By genre");
+        System.out.println("3. By year range");
+        System.out.println("4. By type");
+        System.out.println("5. Back to main menu");
+    }
+
+    private static void searchByAuthor(Library library) {
+        String authorQuery = readNonEmptyString("Author contains: ");
+        List<Book> result = library.findByAuthorContains(authorQuery);
+        printSearchResult(result);
+    }
+
+    private static void searchByGenre(Library library) {
+        BookGenre genre = readGenre();
+        List<Book> result = library.findByGenre(genre);
+        printSearchResult(result);
+    }
+
+    private static void searchByYearRange(Library library) {
+        int fromYear = readIntInRange("From year: ", 1, CURRENT_YEAR);
+        int toYear = readIntInRange("To year: ", fromYear, CURRENT_YEAR);
+        List<Book> result = library.findByYearRange(fromYear, toYear);
+        printSearchResult(result);
+    }
+
+    private static void searchByType(Library library) {
+        printTypeFilterMenu();
+        int typeOption = readIntInRange("Type number: ", 1, 5);
+        List<Book> result = library.findByType(typeOption);
+        printSearchResult(result);
+    }
+
+    private static void printTypeFilterMenu() {
+        System.out.println("Select type:");
+        System.out.println("1. Book");
+        System.out.println("2. EBook");
+        System.out.println("3. PaperBook");
+        System.out.println("4. AudioBook");
+        System.out.println("5. TextBook");
+    }
+
+    private static void printSearchResult(List<Book> result) {
+        if (result.isEmpty()) {
+            System.out.println("No objects matched the search criteria.");
+            return;
+        }
+        System.out.println("Found objects: " + result.size());
+        for (Book book : result) {
+            System.out.println(book);
+        }
     }
 
     private static void createBookByType(Library library) {
