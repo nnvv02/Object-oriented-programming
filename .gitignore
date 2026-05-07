@@ -3,3 +3,6 @@ target/
 .idea/
 .vscode/
 *.iml
+db.properties
+input.txt
+input.json
