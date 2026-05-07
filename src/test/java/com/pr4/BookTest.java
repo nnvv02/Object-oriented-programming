@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BookTest {
     @Test
     void shouldCreateBookWithValidData() {
-        Book book = new Book("Effective Java", "Joshua Bloch", 2018, 416);
+        Book book = new GeneralBook("Effective Java", "Joshua Bloch", 2018, 416);
 
         assertEquals("Effective Java", book.getTitle());
         assertEquals("Joshua Bloch", book.getAuthor());
@@ -19,7 +19,7 @@ class BookTest {
     @Test
     void shouldCreateBookWithEnumGenre() {
         int initialCount = Book.getBookCount();
-        Book book = new Book("Dune", "Frank Herbert", 1965, 412, BookGenre.SCI_FI);
+        Book book = new GeneralBook("Dune", "Frank Herbert", 1965, 412, BookGenre.SCI_FI);
 
         assertEquals(BookGenre.SCI_FI, book.getGenre());
         assertEquals(initialCount + 1, Book.getBookCount());
@@ -27,16 +27,16 @@ class BookTest {
 
     @Test
     void shouldThrowWhenInvalidConstructorData() {
-        assertThrows(InvalidBookDataException.class, () -> new Book("", "Author", 2020, 120));
-        assertThrows(InvalidBookDataException.class, () -> new Book("Title", null, 2020, 120));
-        assertThrows(InvalidBookDataException.class, () -> new Book("Title", "Author", 3000, 120));
-        assertThrows(InvalidBookDataException.class, () -> new Book("Title", "Author", 2020, 0));
+        assertThrows(InvalidBookDataException.class, () -> new GeneralBook("", "Author", 2020, 120));
+        assertThrows(InvalidBookDataException.class, () -> new GeneralBook("Title", null, 2020, 120));
+        assertThrows(InvalidBookDataException.class, () -> new GeneralBook("Title", "Author", 3000, 120));
+        assertThrows(InvalidBookDataException.class, () -> new GeneralBook("Title", "Author", 2020, 0));
     }
 
     @Test
     void shouldUseCopyConstructor() {
-        Book original = new Book("Title", "Author", 2000, 150, BookGenre.HISTORY);
-        Book copy = new Book(original);
+        GeneralBook original = new GeneralBook("Title", "Author", 2000, 150, BookGenre.HISTORY);
+        GeneralBook copy = new GeneralBook(original);
 
         assertEquals(original, copy);
         assertNotSame(original, copy);
@@ -44,7 +44,7 @@ class BookTest {
 
     @Test
     void shouldThrowWhenInvalidSetterValue() {
-        Book book = new Book("Title", "Author", 2000, 150);
+        Book book = new GeneralBook("Title", "Author", 2000, 150);
 
         assertThrows(InvalidBookDataException.class, () -> book.setYear(0));
         assertThrows(InvalidBookDataException.class, () -> book.setPages(-1));

@@ -50,6 +50,12 @@ public class Library {
         return Collections.unmodifiableList(inventory);
     }
 
+    public List<Book> getSortedBooks() {
+        List<Book> books = new ArrayList<>(getBooks());
+        Collections.sort(books);
+        return books;
+    }
+
     public int getBookCount() {
         return inventory.size();
     }
@@ -128,7 +134,7 @@ public class Library {
 
     private boolean matchesType(int typeOption, Book book) {
         if (typeOption == 1) {
-            return book.getClass() == Book.class;
+            return book instanceof GeneralBook;
         }
         if (typeOption == 2) {
             return book instanceof EBook;

@@ -60,7 +60,7 @@ class LibrarySearchTest {
     void shouldTrackUniqueAndTotalCountsAfterAggregation() {
         Library library = createLibrary();
 
-        library.addNewBook(new Book("Dune", "Frank Herbert", 1965, 412, BookGenre.SCI_FI), 4);
+        library.addNewBook(new GeneralBook("Dune", "Frank Herbert", 1965, 412, BookGenre.SCI_FI), 4);
 
         assertEquals(5, library.getBookCount());
         assertEquals(9, library.getTotalQuantity());
@@ -68,7 +68,7 @@ class LibrarySearchTest {
 
     private Library createLibrary() {
         Library library = new Library();
-        library.addBook(new Book("Dune", "Frank Herbert", 1965, 412, BookGenre.SCI_FI));
+        library.addBook(new GeneralBook("Dune", "Frank Herbert", 1965, 412, BookGenre.SCI_FI));
         library.addBook(new EBook("Clean Code", "Robert C. Martin", 2008, 464, BookGenre.NON_FICTION, "PDF", 5.2));
         library.addBook(new PaperBook("The Hobbit", "J.R.R. Tolkien", 1937, 310, BookGenre.FANTASY, "Allen & Unwin", 10000));
         library.addBook(new AudioBook("1984", "George Orwell", 1949, 328, BookGenre.FICTION, 640, "Simon Prebble"));

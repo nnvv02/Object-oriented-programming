@@ -3,7 +3,7 @@ package com.pr4;
 import java.time.Year;
 import java.util.Objects;
 
-public class Book {
+public abstract class Book implements Comparable<Book> {
     private static int bookCount;
     private String title;
     private String author;
@@ -104,5 +104,29 @@ public class Book {
     @Override
     public int hashCode() {
         return Objects.hash(title, author, year, pages, genre);
+    }
+
+    @Override
+    public int compareTo(Book other) {
+        if (other == null) {
+            return 1;
+        }
+
+        int byTitle = String.CASE_INSENSITIVE_ORDER.compare(title, other.title);
+        if (byTitle != 0) {
+            return byTitle;
+        }
+
+        int byAuthor = String.CASE_INSENSITIVE_ORDER.compare(author, other.author);
+        if (byAuthor != 0) {
+            return byAuthor;
+        }
+
+        int byYear = Integer.compare(year, other.year);
+        if (byYear != 0) {
+            return byYear;
+        }
+
+        return Integer.compare(pages, other.pages);
     }
 }
