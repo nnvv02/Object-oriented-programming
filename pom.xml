@@ -11,9 +11,15 @@
         <maven.compiler.release>17</maven.compiler.release>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <maven.surefire.plugin.version>3.0.0</maven.surefire.plugin.version>
+        <postgresql.version>42.7.4</postgresql.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
