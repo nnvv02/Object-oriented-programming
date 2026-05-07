@@ -73,7 +73,7 @@ public class BookRepository {
     }
 
     private String resolveType(Book book) {
-        if (book.getClass() == Book.class) {
+        if (book instanceof GeneralBook) {
             return "Book";
         }
         if (book instanceof EBook) {

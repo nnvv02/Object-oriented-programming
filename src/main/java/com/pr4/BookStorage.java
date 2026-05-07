@@ -97,6 +97,9 @@ public final class BookStorage {
 
     private static String serializeBook(Book book) {
         String type = book.getClass().getSimpleName();
+        if (book instanceof GeneralBook) {
+            type = "Book";
+        }
         if (book instanceof EBook) {
             EBook value = (EBook) book;
             return String.join("|", type, esc(book.getTitle()), esc(book.getAuthor()),
@@ -143,9 +146,9 @@ public final class BookStorage {
         int pages = parseInt(parts[4], "pages");
         BookGenre genre = parseGenre(parts[5]);
 
-        if ("Book".equals(type)) {
+        if ("Book".equals(type) || "GeneralBook".equals(type)) {
             ensureLength(parts, 6, type);
-            return new Book(title, author, year, pages, genre);
+            return new GeneralBook(title, author, year, pages, genre);
         }
         if ("EBook".equals(type)) {
             ensureLength(parts, 8, type);
@@ -183,7 +186,7 @@ public final class BookStorage {
         appendJsonString(builder, "author", book.getAuthor(), true);
         appendJsonNumber(builder, "year", Integer.toString(book.getYear()), true);
         appendJsonNumber(builder, "pages", Integer.toString(book.getPages()), true);
-        appendJsonString(builder, "genre", book.getGenre().name(), book instanceof Book);
+        appendJsonString(builder, "genre", book.getGenre().name(), true);
 
         if (book instanceof EBook) {
             EBook value = (EBook) book;
@@ -430,8 +433,8 @@ public final class BookStorage {
         int pages = parseInt(required(values, "pages"), "pages");
         BookGenre genre = parseGenre(required(values, "genre"));
 
-        if ("Book".equals(type)) {
-            return new Book(title, author, year, pages, genre);
+        if ("Book".equals(type) || "GeneralBook".equals(type)) {
+            return new GeneralBook(title, author, year, pages, genre);
         }
         if ("EBook".equals(type)) {
             String format = required(values, "format");
