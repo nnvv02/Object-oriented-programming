@@ -1,6 +1,7 @@
 package com.pr4;
 
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,20 @@ public class Main {
     private static final Path JSON_FILE = Path.of("input.json");
 
     public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Configuration file path is required. Usage: java Main db.properties");
+            return;
+        }
+
+        BookRepository repository;
+        try {
+            DatabaseConfig config = DatabaseConfig.fromFile(Path.of(args[0]));
+            repository = new BookRepository(config);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Database configuration error: " + e.getMessage());
+            return;
+        }
+
         Library library = new Library();
         List<Book> loadedBooks = loadBooks();
         library.addAllBooks(loadedBooks);
@@ -26,7 +41,7 @@ public class Main {
                     searchBooks(library);
                     break;
                 case 2:
-                    createBookByType(library);
+                    createBookByType(library, repository);
                     break;
                 case 3:
                     printBooks(library);
@@ -157,7 +172,7 @@ public class Main {
         }
     }
 
-    private static void createBookByType(Library library) {
+    private static void createBookByType(Library library, BookRepository repository) {
         while (true) {
             printCreateMenu();
             int typeOption = readInt("Choose type: ");
@@ -169,7 +184,12 @@ public class Main {
             if (book != null) {
                 int quantity = readIntInRange("Quantity: ", 1, Integer.MAX_VALUE);
                 library.addNewBook(book, quantity);
-                System.out.println("Object created.");
+                try {
+                    repository.save(book, quantity);
+                    System.out.println("Object created.");
+                } catch (SQLException e) {
+                    System.out.println("Database insert error: " + e.getMessage());
+                }
                 return;
             }
         }
