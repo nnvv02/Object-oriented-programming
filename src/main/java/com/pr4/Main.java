@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -47,11 +48,14 @@ public class Main {
                     printBooks(library);
                     break;
                 case 4:
+                    printSortedBooks(library);
+                    break;
+                case 5:
                     saveBooks(library);
                     SCANNER.close();
                     return;
                 default:
-                    System.out.println("Invalid option. Enter 1 to 4.");
+                    System.out.println("Invalid option. Enter 1 to 5.");
             }
         }
     }
@@ -86,7 +90,8 @@ public class Main {
         System.out.println("1. Search objects");
         System.out.println("2. Create a new object");
         System.out.println("3. Show all objects");
-        System.out.println("4. Exit");
+        System.out.println("4. Show all objects (sorted)");
+        System.out.println("5. Exit");
     }
 
     private static void searchBooks(Library library) {
@@ -220,7 +225,7 @@ public class Main {
         try {
             switch (typeOption) {
                 case 1:
-                    return new Book(title, author, year, pages, genre);
+                    return new GeneralBook(title, author, year, pages, genre);
                 case 2:
                     String format = readNonEmptyString("Format: ");
                     double fileSize = readPositiveDouble("File size (MB): ");
@@ -254,6 +259,21 @@ public class Main {
         System.out.println("Total quantity: " + library.getTotalQuantity());
         for (BookQuantity item : library.getInventory()) {
             System.out.println(item.getBook() + ", quantity=" + item.getQuantity());
+        }
+    }
+
+    private static void printSortedBooks(Library library) {
+        List<Book> books = new ArrayList<>(library.getBooks());
+        Collections.sort(books);
+
+        if (books.isEmpty()) {
+            System.out.println("Collection is empty.");
+            return;
+        }
+
+        System.out.println("Sorted objects:");
+        for (Book book : books) {
+            System.out.println(book);
         }
     }
 
