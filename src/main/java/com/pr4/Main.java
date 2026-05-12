@@ -298,15 +298,12 @@ public class Main {
             int option = readInt("Choose sorting option: ");
             switch (option) {
                 case 1:
-                    return new Comparator<Book>() {
-                        @Override
-                        public int compare(Book first, Book second) {
-                            int byTitle = String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
-                            if (byTitle != 0) {
-                                return byTitle;
-                            }
-                            return String.CASE_INSENSITIVE_ORDER.compare(first.getAuthor(), second.getAuthor());
+                    return (first, second) -> {
+                        int byTitle = String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                        if (byTitle != 0) {
+                            return byTitle;
                         }
+                        return String.CASE_INSENSITIVE_ORDER.compare(first.getAuthor(), second.getAuthor());
                     };
                 case 2:
                     return new Comparator<Book>() {
