@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LibrarySearchTest {
@@ -54,6 +55,25 @@ class LibrarySearchTest {
         List<Book> result = library.findByAuthorContains("Unknown");
 
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void shouldFindByUuid() {
+        Library library = createLibrary();
+        Book target = library.getBooks().get(0);
+
+        Book found = library.findByUuid(target.getUuid());
+
+        assertEquals(target, found);
+    }
+
+    @Test
+    void shouldReturnNullForInvalidUuidString() {
+        Library library = createLibrary();
+
+        Book found = library.findByUuid("invalid-uuid");
+
+        assertNull(found);
     }
 
     @Test
