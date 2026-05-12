@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -275,6 +276,15 @@ public class Main {
         for (Book book : books) {
             System.out.println(book);
         }
+    }
+
+    private static void printSortMenu() {
+        System.out.println();
+        System.out.println("Sorting criteria:");
+        System.out.println("1. By title");
+        System.out.println("2. By year");
+        System.out.println("3. By pages");
+        System.out.println("4. Back to main menu");
     }
 
     private static BookGenre readGenre() {
