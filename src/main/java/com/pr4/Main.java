@@ -287,6 +287,40 @@ public class Main {
         System.out.println("4. Back to main menu");
     }
 
+    private static Comparator<Book> chooseSortComparator() {
+        while (true) {
+            printSortMenu();
+            int option = readInt("Choose sorting option: ");
+            switch (option) {
+                case 1:
+                    return new Comparator<Book>() {
+                        @Override
+                        public int compare(Book first, Book second) {
+                            return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                        }
+                    };
+                case 2:
+                    return new Comparator<Book>() {
+                        @Override
+                        public int compare(Book first, Book second) {
+                            return Integer.compare(first.getYear(), second.getYear());
+                        }
+                    };
+                case 3:
+                    return new Comparator<Book>() {
+                        @Override
+                        public int compare(Book first, Book second) {
+                            return Integer.compare(first.getPages(), second.getPages());
+                        }
+                    };
+                case 4:
+                    return null;
+                default:
+                    System.out.println("Invalid sorting option. Enter 1 to 4.");
+            }
+        }
+    }
+
     private static BookGenre readGenre() {
         BookGenre[] genres = BookGenre.values();
         System.out.println("Select genre:");
