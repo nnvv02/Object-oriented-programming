@@ -14,6 +14,7 @@ class BookTest {
         assertEquals(2018, book.getYear());
         assertEquals(416, book.getPages());
         assertEquals(BookGenre.GENERAL, book.getGenre());
+        assertNotNull(book.getUuid());
     }
 
     @Test

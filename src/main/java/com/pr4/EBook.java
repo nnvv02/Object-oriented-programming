@@ -46,7 +46,7 @@ public class EBook extends Book {
 
     @Override
     public String toString() {
-        return "EBook{title='" + getTitle() + "', author='" + getAuthor() + "', year=" + getYear() + 
+        return "EBook{uuid=" + getUuid() + ", title='" + getTitle() + "', author='" + getAuthor() + "', year=" + getYear() +
                ", pages=" + getPages() + ", genre=" + getGenre() + ", format='" + format + "', fileSize=" + fileSize + " MB}";
     }
 

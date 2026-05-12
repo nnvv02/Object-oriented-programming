@@ -15,7 +15,7 @@ public class GeneralBook extends Book {
 
     @Override
     public String toString() {
-        return "Book{title='" + getTitle() + "', author='" + getAuthor() + "', year=" + getYear()
+        return "Book{uuid=" + getUuid() + ", title='" + getTitle() + "', author='" + getAuthor() + "', year=" + getYear()
                 + ", pages=" + getPages() + ", genre=" + getGenre() + "}";
     }
 }

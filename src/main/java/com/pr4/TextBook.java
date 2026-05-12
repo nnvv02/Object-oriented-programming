@@ -40,7 +40,7 @@ public class TextBook extends Book {
 
     @Override
     public String toString() {
-        return "TextBook{title='" + getTitle() + "', author='" + getAuthor() + "', year=" + getYear()
+        return "TextBook{uuid=" + getUuid() + ", title='" + getTitle() + "', author='" + getAuthor() + "', year=" + getYear()
                 + ", pages=" + getPages() + ", genre=" + getGenre() + ", subject='" + subject
                 + "', gradeLevel=" + gradeLevel + "}";
     }

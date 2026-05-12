@@ -46,7 +46,7 @@ public class PaperBook extends Book {
 
     @Override
     public String toString() {
-        return "PaperBook{title='" + getTitle() + "', author='" + getAuthor() + "', year=" + getYear() + 
+        return "PaperBook{uuid=" + getUuid() + ", title='" + getTitle() + "', author='" + getAuthor() + "', year=" + getYear() +
                ", pages=" + getPages() + ", genre=" + getGenre() + ", publisher='" + publisher + "', printRun=" + printRun + "}";
     }
 

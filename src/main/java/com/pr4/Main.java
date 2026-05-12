@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class Main {
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -99,7 +100,7 @@ public class Main {
         while (true) {
             printSearchMenu();
             int option = readInt("Choose search option: ");
-            if (option == 5) {
+            if (option == 6) {
                 return;
             }
 
@@ -116,8 +117,11 @@ public class Main {
                 case 4:
                     searchByType(library);
                     break;
+                case 5:
+                    searchByUuid(library);
+                    break;
                 default:
-                    System.out.println("Invalid search option. Enter 1 to 5.");
+                    System.out.println("Invalid search option. Enter 1 to 6.");
             }
         }
     }
@@ -129,7 +133,8 @@ public class Main {
         System.out.println("2. By genre");
         System.out.println("3. By year range");
         System.out.println("4. By type");
-        System.out.println("5. Back to main menu");
+        System.out.println("5. By UUID");
+        System.out.println("6. Back to main menu");
     }
 
     private static void searchByAuthor(Library library) {
@@ -156,6 +161,22 @@ public class Main {
         int typeOption = readIntInRange("Type number: ", 1, 5);
         List<Book> result = library.findByType(typeOption);
         printSearchResult(result);
+    }
+
+    private static void searchByUuid(Library library) {
+        String uuidValue = readNonEmptyString("UUID: ");
+        try {
+            UUID uuid = UUID.fromString(uuidValue);
+            Book found = library.findByUuid(uuid);
+            if (found == null) {
+                System.out.println("Object was not found.");
+                return;
+            }
+            System.out.println("Found object:");
+            System.out.println(found);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid UUID format.");
+        }
     }
 
     private static void printTypeFilterMenu() {
