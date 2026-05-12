@@ -301,21 +301,33 @@ public class Main {
                     return new Comparator<Book>() {
                         @Override
                         public int compare(Book first, Book second) {
-                            return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                            int byTitle = String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                            if (byTitle != 0) {
+                                return byTitle;
+                            }
+                            return String.CASE_INSENSITIVE_ORDER.compare(first.getAuthor(), second.getAuthor());
                         }
                     };
                 case 2:
                     return new Comparator<Book>() {
                         @Override
                         public int compare(Book first, Book second) {
-                            return Integer.compare(first.getYear(), second.getYear());
+                            int byYear = Integer.compare(first.getYear(), second.getYear());
+                            if (byYear != 0) {
+                                return byYear;
+                            }
+                            return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
                         }
                     };
                 case 3:
                     return new Comparator<Book>() {
                         @Override
                         public int compare(Book first, Book second) {
-                            return Integer.compare(first.getPages(), second.getPages());
+                            int byPages = Integer.compare(first.getPages(), second.getPages());
+                            if (byPages != 0) {
+                                return byPages;
+                            }
+                            return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
                         }
                     };
                 case 4:
