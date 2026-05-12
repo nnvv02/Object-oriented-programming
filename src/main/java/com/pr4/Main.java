@@ -276,7 +276,7 @@ public class Main {
             return;
         }
 
-        Collections.sort(books, comparator);
+        books.sort(comparator);
         System.out.println("Sorted objects:");
         for (Book book : books) {
             System.out.println(book);
