@@ -314,15 +314,12 @@ public class Main {
                         return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
                     };
                 case 3:
-                    return new Comparator<Book>() {
-                        @Override
-                        public int compare(Book first, Book second) {
-                            int byPages = Integer.compare(first.getPages(), second.getPages());
-                            if (byPages != 0) {
-                                return byPages;
-                            }
-                            return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                    return (first, second) -> {
+                        int byPages = Integer.compare(first.getPages(), second.getPages());
+                        if (byPages != 0) {
+                            return byPages;
                         }
+                        return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
                     };
                 case 4:
                     return null;
