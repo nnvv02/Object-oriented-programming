@@ -306,15 +306,12 @@ public class Main {
                         return String.CASE_INSENSITIVE_ORDER.compare(first.getAuthor(), second.getAuthor());
                     };
                 case 2:
-                    return new Comparator<Book>() {
-                        @Override
-                        public int compare(Book first, Book second) {
-                            int byYear = Integer.compare(first.getYear(), second.getYear());
-                            if (byYear != 0) {
-                                return byYear;
-                            }
-                            return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                    return (first, second) -> {
+                        int byYear = Integer.compare(first.getYear(), second.getYear());
+                        if (byYear != 0) {
+                            return byYear;
                         }
+                        return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
                     };
                 case 3:
                     return new Comparator<Book>() {
