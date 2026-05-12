@@ -276,7 +276,7 @@ public class Main {
             return;
         }
 
-        Collections.sort(books, comparator);
+        books.sort(comparator);
         System.out.println("Sorted objects:");
         for (Book book : books) {
             System.out.println(book);
@@ -298,37 +298,28 @@ public class Main {
             int option = readInt("Choose sorting option: ");
             switch (option) {
                 case 1:
-                    return new Comparator<Book>() {
-                        @Override
-                        public int compare(Book first, Book second) {
-                            int byTitle = String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
-                            if (byTitle != 0) {
-                                return byTitle;
-                            }
-                            return String.CASE_INSENSITIVE_ORDER.compare(first.getAuthor(), second.getAuthor());
+                    return (first, second) -> {
+                        int byTitle = String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                        if (byTitle != 0) {
+                            return byTitle;
                         }
+                        return String.CASE_INSENSITIVE_ORDER.compare(first.getAuthor(), second.getAuthor());
                     };
                 case 2:
-                    return new Comparator<Book>() {
-                        @Override
-                        public int compare(Book first, Book second) {
-                            int byYear = Integer.compare(first.getYear(), second.getYear());
-                            if (byYear != 0) {
-                                return byYear;
-                            }
-                            return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                    return (first, second) -> {
+                        int byYear = Integer.compare(first.getYear(), second.getYear());
+                        if (byYear != 0) {
+                            return byYear;
                         }
+                        return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
                     };
                 case 3:
-                    return new Comparator<Book>() {
-                        @Override
-                        public int compare(Book first, Book second) {
-                            int byPages = Integer.compare(first.getPages(), second.getPages());
-                            if (byPages != 0) {
-                                return byPages;
-                            }
-                            return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                    return (first, second) -> {
+                        int byPages = Integer.compare(first.getPages(), second.getPages());
+                        if (byPages != 0) {
+                            return byPages;
                         }
+                        return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
                     };
                 case 4:
                     return null;
