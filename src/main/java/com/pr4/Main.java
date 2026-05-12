@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -264,16 +265,76 @@ public class Main {
 
     private static void printSortedBooks(Library library) {
         List<Book> books = new ArrayList<>(library.getBooks());
-        Collections.sort(books);
-
         if (books.isEmpty()) {
             System.out.println("Collection is empty.");
             return;
         }
 
+        Comparator<Book> comparator = chooseSortComparator();
+        if (comparator == null) {
+            System.out.println("Sorting was cancelled.");
+            return;
+        }
+
+        Collections.sort(books, comparator);
         System.out.println("Sorted objects:");
         for (Book book : books) {
             System.out.println(book);
+        }
+    }
+
+    private static void printSortMenu() {
+        System.out.println();
+        System.out.println("Sorting criteria:");
+        System.out.println("1. By title");
+        System.out.println("2. By year");
+        System.out.println("3. By pages");
+        System.out.println("4. Back to main menu");
+    }
+
+    private static Comparator<Book> chooseSortComparator() {
+        while (true) {
+            printSortMenu();
+            int option = readInt("Choose sorting option: ");
+            switch (option) {
+                case 1:
+                    return new Comparator<Book>() {
+                        @Override
+                        public int compare(Book first, Book second) {
+                            int byTitle = String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                            if (byTitle != 0) {
+                                return byTitle;
+                            }
+                            return String.CASE_INSENSITIVE_ORDER.compare(first.getAuthor(), second.getAuthor());
+                        }
+                    };
+                case 2:
+                    return new Comparator<Book>() {
+                        @Override
+                        public int compare(Book first, Book second) {
+                            int byYear = Integer.compare(first.getYear(), second.getYear());
+                            if (byYear != 0) {
+                                return byYear;
+                            }
+                            return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                        }
+                    };
+                case 3:
+                    return new Comparator<Book>() {
+                        @Override
+                        public int compare(Book first, Book second) {
+                            int byPages = Integer.compare(first.getPages(), second.getPages());
+                            if (byPages != 0) {
+                                return byPages;
+                            }
+                            return String.CASE_INSENSITIVE_ORDER.compare(first.getTitle(), second.getTitle());
+                        }
+                    };
+                case 4:
+                    return null;
+                default:
+                    System.out.println("Invalid sorting option. Enter 1 to 4.");
+            }
         }
     }
 
