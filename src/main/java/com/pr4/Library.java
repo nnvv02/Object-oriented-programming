@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 public class Library {
     private final List<BookQuantity> inventory = new ArrayList<>();
@@ -121,6 +122,27 @@ public class Library {
             return 0;
         }
         return item.getQuantity();
+    }
+
+    public Book findByUuid(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
+        for (BookQuantity item : inventory) {
+            Book book = item.getBook();
+            if (book.getUuid().equals(uuid)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+    public Book findByUuid(String uuidValue) {
+        try {
+            return findByUuid(UUID.fromString(uuidValue));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     private BookQuantity findInventoryEntry(Book target) {

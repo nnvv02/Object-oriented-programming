@@ -2,9 +2,11 @@ package com.pr4;
 
 import java.time.Year;
 import java.util.Objects;
+import java.util.UUID;
 
-public abstract class Book implements Comparable<Book> {
+public abstract class Book implements Comparable<Book>, Identifiable {
     private static int bookCount;
+    private final UUID uuid;
     private String title;
     private String author;
     private int year;
@@ -16,6 +18,7 @@ public abstract class Book implements Comparable<Book> {
     }
 
     public Book(String title, String author, int year, int pages, BookGenre genre) {
+        this.uuid = UUID.randomUUID();
         setTitle(title);
         setAuthor(author);
         setYear(year);
@@ -26,6 +29,11 @@ public abstract class Book implements Comparable<Book> {
 
     public Book(Book other) {
         this(other.title, other.author, other.year, other.pages, other.genre);
+    }
+
+    @Override
+    public UUID getUuid() {
+        return uuid;
     }
 
     public static int getBookCount() {
@@ -90,7 +98,7 @@ public abstract class Book implements Comparable<Book> {
 
     @Override
     public String toString() {
-        return "Book{title='" + title + "', author='" + author + "', year=" + year + ", pages=" + pages + ", genre=" + genre + "}";
+        return "Book{uuid=" + uuid + ", title='" + title + "', author='" + author + "', year=" + year + ", pages=" + pages + ", genre=" + genre + "}";
     }
 
     @Override

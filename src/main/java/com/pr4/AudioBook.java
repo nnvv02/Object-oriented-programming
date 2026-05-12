@@ -40,7 +40,7 @@ public class AudioBook extends Book {
 
     @Override
     public String toString() {
-        return "AudioBook{title='" + getTitle() + "', author='" + getAuthor() + "', year=" + getYear()
+        return "AudioBook{uuid=" + getUuid() + ", title='" + getTitle() + "', author='" + getAuthor() + "', year=" + getYear()
                 + ", pages=" + getPages() + ", genre=" + getGenre() + ", durationMinutes=" + durationMinutes
                 + ", narrator='" + narrator + "'}";
     }
