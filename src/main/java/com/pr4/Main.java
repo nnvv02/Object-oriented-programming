@@ -265,13 +265,18 @@ public class Main {
 
     private static void printSortedBooks(Library library) {
         List<Book> books = new ArrayList<>(library.getBooks());
-        Collections.sort(books);
-
         if (books.isEmpty()) {
             System.out.println("Collection is empty.");
             return;
         }
 
+        Comparator<Book> comparator = chooseSortComparator();
+        if (comparator == null) {
+            System.out.println("Sorting was cancelled.");
+            return;
+        }
+
+        Collections.sort(books, comparator);
         System.out.println("Sorted objects:");
         for (Book book : books) {
             System.out.println(book);
