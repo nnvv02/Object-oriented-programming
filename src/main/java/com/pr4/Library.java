@@ -51,6 +51,45 @@ public class Library {
         return Collections.unmodifiableList(inventory);
     }
 
+    public boolean update(Book existingObject, Book newObject) {
+        if (existingObject == null || newObject == null) {
+            return false;
+        }
+
+        for (int i = 0; i < inventory.size(); i++) {
+            BookQuantity item = inventory.get(i);
+            if (!item.getBook().equals(existingObject)) {
+                continue;
+            }
+
+            int quantity = item.getQuantity();
+            inventory.remove(i);
+
+            BookQuantity duplicate = findInventoryEntry(newObject);
+            if (duplicate != null) {
+                duplicate.addQuantity(quantity);
+            } else {
+                inventory.add(new BookQuantity(newObject, quantity));
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean delete(Book existingObject) {
+        if (existingObject == null) {
+            return false;
+        }
+        for (int i = 0; i < inventory.size(); i++) {
+            if (inventory.get(i).getBook().equals(existingObject)) {
+                inventory.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Book> getSortedBooks() {
         List<Book> books = new ArrayList<>(getBooks());
         Collections.sort(books);
