@@ -3,7 +3,7 @@ package com.pr4;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LibraryModificationEdgeTest {
@@ -24,13 +24,13 @@ class LibraryModificationEdgeTest {
     }
 
     @Test
-    void shouldReturnFalseForNullArgumentsInUpdateAndDelete() {
+    void shouldThrowInvalidBookDataForNullArgumentsInUpdateAndDelete() {
         Library library = new Library();
         Book book = new GeneralBook("Book", "Author", 2020, 100, BookGenre.GENERAL);
         library.addBook(book);
 
-        assertFalse(library.update(null, book));
-        assertFalse(library.update(book, null));
-        assertFalse(library.delete(null));
+        assertThrows(InvalidBookDataException.class, () -> library.update(null, book));
+        assertThrows(InvalidBookDataException.class, () -> library.update(book, null));
+        assertThrows(InvalidBookDataException.class, () -> library.delete(null));
     }
 }
