@@ -52,8 +52,11 @@ public class Library {
     }
 
     public boolean update(Book existingObject, Book newObject) {
-        if (existingObject == null || newObject == null) {
-            return false;
+        if (existingObject == null) {
+            throw new InvalidBookDataException("Existing object for update must not be null");
+        }
+        if (newObject == null) {
+            throw new InvalidBookDataException("New object for update must not be null");
         }
 
         for (int i = 0; i < inventory.size(); i++) {
@@ -74,12 +77,12 @@ public class Library {
             return true;
         }
 
-        return false;
+        throw new ObjectNotFoundException("Object to update was not found");
     }
 
     public boolean delete(Book existingObject) {
         if (existingObject == null) {
-            return false;
+            throw new InvalidBookDataException("Object for delete must not be null");
         }
         for (int i = 0; i < inventory.size(); i++) {
             if (inventory.get(i).getBook().equals(existingObject)) {
@@ -87,7 +90,7 @@ public class Library {
                 return true;
             }
         }
-        return false;
+        throw new ObjectNotFoundException("Object to delete was not found");
     }
 
     public List<Book> getSortedBooks() {
