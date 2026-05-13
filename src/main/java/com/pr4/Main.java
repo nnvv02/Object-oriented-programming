@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
@@ -47,17 +46,23 @@ public class Main {
                     createBookByType(library, repository);
                     break;
                 case 3:
-                    printBooks(library);
+                    modifyBook(library);
                     break;
                 case 4:
-                    printSortedBooks(library);
+                    deleteBook(library);
                     break;
                 case 5:
+                    printBooks(library);
+                    break;
+                case 6:
+                    printSortedBooks(library);
+                    break;
+                case 7:
                     saveBooks(library);
                     SCANNER.close();
                     return;
                 default:
-                    System.out.println("Invalid option. Enter 1 to 5.");
+                    System.out.println("Invalid option. Enter 1 to 7.");
             }
         }
     }
@@ -91,9 +96,11 @@ public class Main {
         System.out.println();
         System.out.println("1. Search objects");
         System.out.println("2. Create a new object");
-        System.out.println("3. Show all objects");
-        System.out.println("4. Show all objects (sorted)");
-        System.out.println("5. Exit");
+        System.out.println("3. Modify object");
+        System.out.println("4. Delete object");
+        System.out.println("5. Show all objects");
+        System.out.println("6. Show all objects (sorted)");
+        System.out.println("7. Exit");
     }
 
     private static void searchBooks(Library library) {
@@ -408,5 +415,271 @@ public class Main {
             }
             System.out.println("Enter a value between " + min + " and " + max + ".");
         }
+    }
+
+    private static void modifyBook(Library library) {
+        if (library.getInventory().isEmpty()) {
+            System.out.println("Collection is empty.");
+            return;
+        }
+
+        printBooks(library);
+        Book existing = readBookByUuid(library, "Enter UUID of object to modify: ");
+        if (existing == null) {
+            System.out.println("Object was not found.");
+            return;
+        }
+
+        Book updated;
+        try {
+            updated = createUpdatedBook(existing);
+        } catch (InvalidBookDataException e) {
+            System.out.println("Invalid data: " + e.getMessage());
+            return;
+        }
+
+        boolean updatedSuccessfully = library.update(existing, updated);
+        if (updatedSuccessfully) {
+            System.out.println("Object was modified.");
+            return;
+        }
+        System.out.println("Object was not found.");
+    }
+
+    private static void deleteBook(Library library) {
+        if (library.getInventory().isEmpty()) {
+            System.out.println("Collection is empty.");
+            return;
+        }
+
+        printBooks(library);
+        Book existing = readBookByUuid(library, "Enter UUID of object to delete: ");
+        if (existing == null) {
+            System.out.println("Object was not found.");
+            return;
+        }
+
+        if (!confirmDeletion()) {
+            System.out.println("Deletion was cancelled.");
+            return;
+        }
+
+        boolean deleted = library.delete(existing);
+        if (deleted) {
+            System.out.println("Object was deleted.");
+            return;
+        }
+        System.out.println("Object was not found.");
+    }
+
+    private static Book readBookByUuid(Library library, String prompt) {
+        String uuidValue = readNonEmptyString(prompt);
+        Book found = library.findByUuid(uuidValue);
+        if (found == null) {
+            System.out.println("Invalid UUID format or object not found.");
+            return null;
+        }
+        return found;
+    }
+
+    private static boolean confirmDeletion() {
+        while (true) {
+            String answer = readNonEmptyString("Confirm deletion (yes/no): ");
+            if ("yes".equalsIgnoreCase(answer)) {
+                return true;
+            }
+            if ("no".equalsIgnoreCase(answer)) {
+                return false;
+            }
+            System.out.println("Enter yes or no.");
+        }
+    }
+
+    private static Book createUpdatedBook(Book source) {
+        if (source instanceof EBook) {
+            return updateEBook((EBook) source);
+        }
+        if (source instanceof PaperBook) {
+            return updatePaperBook((PaperBook) source);
+        }
+        if (source instanceof AudioBook) {
+            return updateAudioBook((AudioBook) source);
+        }
+        if (source instanceof TextBook) {
+            return updateTextBook((TextBook) source);
+        }
+        return updateGeneralBook((GeneralBook) source);
+    }
+
+    private static GeneralBook updateGeneralBook(GeneralBook source) {
+        String title = source.getTitle();
+        String author = source.getAuthor();
+        int year = source.getYear();
+        int pages = source.getPages();
+        BookGenre genre = source.getGenre();
+
+        printBaseAttributeMenu();
+        int option = readIntInRange("Choose attribute: ", 1, 5);
+        if (option == 1) {
+            title = readNonEmptyString("New title: ");
+        } else if (option == 2) {
+            author = readNonEmptyString("New author: ");
+        } else if (option == 3) {
+            year = readIntInRange("New year: ", 1, CURRENT_YEAR);
+        } else if (option == 4) {
+            pages = readIntInRange("New pages: ", 1, Integer.MAX_VALUE);
+        } else {
+            genre = readGenre();
+        }
+        return new GeneralBook(title, author, year, pages, genre);
+    }
+
+    private static EBook updateEBook(EBook source) {
+        String title = source.getTitle();
+        String author = source.getAuthor();
+        int year = source.getYear();
+        int pages = source.getPages();
+        BookGenre genre = source.getGenre();
+        String format = source.getFormat();
+        double fileSize = source.getFileSize();
+
+        printEBookAttributeMenu();
+        int option = readIntInRange("Choose attribute: ", 1, 7);
+        if (option == 1) {
+            title = readNonEmptyString("New title: ");
+        } else if (option == 2) {
+            author = readNonEmptyString("New author: ");
+        } else if (option == 3) {
+            year = readIntInRange("New year: ", 1, CURRENT_YEAR);
+        } else if (option == 4) {
+            pages = readIntInRange("New pages: ", 1, Integer.MAX_VALUE);
+        } else if (option == 5) {
+            genre = readGenre();
+        } else if (option == 6) {
+            format = readNonEmptyString("New format: ");
+        } else {
+            fileSize = readPositiveDouble("New file size (MB): ");
+        }
+        return new EBook(title, author, year, pages, genre, format, fileSize);
+    }
+
+    private static PaperBook updatePaperBook(PaperBook source) {
+        String title = source.getTitle();
+        String author = source.getAuthor();
+        int year = source.getYear();
+        int pages = source.getPages();
+        BookGenre genre = source.getGenre();
+        String publisher = source.getPublisher();
+        int printRun = source.getPrintRun();
+
+        printPaperBookAttributeMenu();
+        int option = readIntInRange("Choose attribute: ", 1, 7);
+        if (option == 1) {
+            title = readNonEmptyString("New title: ");
+        } else if (option == 2) {
+            author = readNonEmptyString("New author: ");
+        } else if (option == 3) {
+            year = readIntInRange("New year: ", 1, CURRENT_YEAR);
+        } else if (option == 4) {
+            pages = readIntInRange("New pages: ", 1, Integer.MAX_VALUE);
+        } else if (option == 5) {
+            genre = readGenre();
+        } else if (option == 6) {
+            publisher = readNonEmptyString("New publisher: ");
+        } else {
+            printRun = readIntInRange("New print run: ", 1, Integer.MAX_VALUE);
+        }
+        return new PaperBook(title, author, year, pages, genre, publisher, printRun);
+    }
+
+    private static AudioBook updateAudioBook(AudioBook source) {
+        String title = source.getTitle();
+        String author = source.getAuthor();
+        int year = source.getYear();
+        int pages = source.getPages();
+        BookGenre genre = source.getGenre();
+        int durationMinutes = source.getDurationMinutes();
+        String narrator = source.getNarrator();
+
+        printAudioBookAttributeMenu();
+        int option = readIntInRange("Choose attribute: ", 1, 7);
+        if (option == 1) {
+            title = readNonEmptyString("New title: ");
+        } else if (option == 2) {
+            author = readNonEmptyString("New author: ");
+        } else if (option == 3) {
+            year = readIntInRange("New year: ", 1, CURRENT_YEAR);
+        } else if (option == 4) {
+            pages = readIntInRange("New pages: ", 1, Integer.MAX_VALUE);
+        } else if (option == 5) {
+            genre = readGenre();
+        } else if (option == 6) {
+            durationMinutes = readIntInRange("New duration (minutes): ", 1, Integer.MAX_VALUE);
+        } else {
+            narrator = readNonEmptyString("New narrator: ");
+        }
+        return new AudioBook(title, author, year, pages, genre, durationMinutes, narrator);
+    }
+
+    private static TextBook updateTextBook(TextBook source) {
+        String title = source.getTitle();
+        String author = source.getAuthor();
+        int year = source.getYear();
+        int pages = source.getPages();
+        BookGenre genre = source.getGenre();
+        String subject = source.getSubject();
+        int gradeLevel = source.getGradeLevel();
+
+        printTextBookAttributeMenu();
+        int option = readIntInRange("Choose attribute: ", 1, 7);
+        if (option == 1) {
+            title = readNonEmptyString("New title: ");
+        } else if (option == 2) {
+            author = readNonEmptyString("New author: ");
+        } else if (option == 3) {
+            year = readIntInRange("New year: ", 1, CURRENT_YEAR);
+        } else if (option == 4) {
+            pages = readIntInRange("New pages: ", 1, Integer.MAX_VALUE);
+        } else if (option == 5) {
+            genre = readGenre();
+        } else if (option == 6) {
+            subject = readNonEmptyString("New subject: ");
+        } else {
+            gradeLevel = readIntInRange("New grade level: ", 1, Integer.MAX_VALUE);
+        }
+        return new TextBook(title, author, year, pages, genre, subject, gradeLevel);
+    }
+
+    private static void printBaseAttributeMenu() {
+        System.out.println("Attributes:");
+        System.out.println("1. Title");
+        System.out.println("2. Author");
+        System.out.println("3. Year");
+        System.out.println("4. Pages");
+        System.out.println("5. Genre");
+    }
+
+    private static void printEBookAttributeMenu() {
+        printBaseAttributeMenu();
+        System.out.println("6. Format");
+        System.out.println("7. File size");
+    }
+
+    private static void printPaperBookAttributeMenu() {
+        printBaseAttributeMenu();
+        System.out.println("6. Publisher");
+        System.out.println("7. Print run");
+    }
+
+    private static void printAudioBookAttributeMenu() {
+        printBaseAttributeMenu();
+        System.out.println("6. Duration");
+        System.out.println("7. Narrator");
+    }
+
+    private static void printTextBookAttributeMenu() {
+        printBaseAttributeMenu();
+        System.out.println("6. Subject");
+        System.out.println("7. Grade level");
     }
 }
