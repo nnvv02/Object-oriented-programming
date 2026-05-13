@@ -3,7 +3,7 @@ package com.pr4;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LibraryModificationTest {
@@ -24,14 +24,12 @@ class LibraryModificationTest {
     }
 
     @Test
-    void shouldReturnFalseWhenUpdatingMissingBook() {
+    void shouldThrowObjectNotFoundWhenUpdatingMissingBook() {
         Library library = new Library();
         Book existing = new GeneralBook("A", "B", 2000, 100, BookGenre.GENERAL);
         Book replacement = new GeneralBook("C", "D", 2001, 120, BookGenre.FICTION);
 
-        boolean updated = library.update(existing, replacement);
-
-        assertFalse(updated);
+        assertThrows(ObjectNotFoundException.class, () -> library.update(existing, replacement));
     }
 
     @Test
@@ -48,12 +46,10 @@ class LibraryModificationTest {
     }
 
     @Test
-    void shouldReturnFalseWhenDeletingMissingBook() {
+    void shouldThrowObjectNotFoundWhenDeletingMissingBook() {
         Library library = new Library();
         Book missing = new GeneralBook("Missing", "Author", 2005, 210, BookGenre.FICTION);
 
-        boolean deleted = library.delete(missing);
-
-        assertFalse(deleted);
+        assertThrows(ObjectNotFoundException.class, () -> library.delete(missing));
     }
 }
