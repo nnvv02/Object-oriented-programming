@@ -31,8 +31,7 @@ public class Main {
         }
 
         Library library = new Library();
-        List<Book> loadedBooks = loadBooks();
-        library.addAllBooks(loadedBooks);
+        loadBooks(library, repository);
 
         while (true) {
             printMenu();
@@ -67,18 +66,35 @@ public class Main {
         }
     }
 
-    private static List<Book> loadBooks() {
+    private static void loadBooks(Library library, BookRepository repository) {
+        try {
+            List<BookQuantity> inventoryFromDb = repository.findAll();
+            if (!inventoryFromDb.isEmpty()) {
+                for (BookQuantity item : inventoryFromDb) {
+                    library.addNewBook(item.getBook(), item.getQuantity());
+                }
+                System.out.println("Loaded from database: " + inventoryFromDb.size() + " unique objects.");
+                return;
+            }
+            System.out.println("Database table is empty. Falling back to local files.");
+        } catch (SQLException | IllegalArgumentException e) {
+            System.out.println("Database load error: " + e.getMessage());
+            System.out.println("Falling back to local files.");
+        }
+
         List<Book> booksFromText = BookStorage.loadFromText(TEXT_FILE);
         if (!booksFromText.isEmpty()) {
-            return booksFromText;
+            library.addAllBooks(booksFromText);
+            System.out.println("Loaded from text file: " + booksFromText.size() + " objects.");
+            return;
         }
 
         List<Book> booksFromJson = BookStorage.loadFromJson(JSON_FILE);
         if (!booksFromJson.isEmpty()) {
-            return booksFromJson;
+            library.addAllBooks(booksFromJson);
+            System.out.println("Loaded from JSON file: " + booksFromJson.size() + " objects.");
+            return;
         }
-
-        return new ArrayList<>();
     }
 
     private static void saveBooks(Library library) {
@@ -438,12 +454,13 @@ public class Main {
             return;
         }
 
-        boolean updatedSuccessfully = library.update(existing, updated);
-        if (updatedSuccessfully) {
+        try {
+            library.update(existing, updated);
             System.out.println("Object was modified.");
             return;
+        } catch (InvalidBookDataException | ObjectNotFoundException e) {
+            System.out.println(e.getMessage());
         }
-        System.out.println("Object was not found.");
     }
 
     private static void deleteBook(Library library) {
@@ -464,12 +481,13 @@ public class Main {
             return;
         }
 
-        boolean deleted = library.delete(existing);
-        if (deleted) {
+        try {
+            library.delete(existing);
             System.out.println("Object was deleted.");
             return;
+        } catch (InvalidBookDataException | ObjectNotFoundException e) {
+            System.out.println(e.getMessage());
         }
-        System.out.println("Object was not found.");
     }
 
     private static Book readBookByUuid(Library library, String prompt) {
